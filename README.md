@@ -3,9 +3,10 @@
 1. Make sure that you have both _Python_ and _Node.js_ installed on your machine.
 2. Clone the repo to your local device
 
-If your `pip` command is not working try
+If your `pip` command is not working try <br>
 For windows:
 `python -m pip install`
+<br>
 For mac:
 `python3 -m pip install`
 
