@@ -20,11 +20,10 @@ const UserDropdown = () => {
     return (
         <Menu trigger="click-hover" openDelay={100} closeDelay={500} shadow="md" width={200} zIndex={1600} withArrow >
           <Menu.Target>
-            <Avatar src={null} radius="xl" ml="lg" color="#d4a373" />
+            <Avatar src={null} radius="xl" ml="lg" color="thistle" />
           </Menu.Target>
           <Menu.Dropdown >
             <Menu.Item onClick={() => {navigate('/profile')}}>My Account</Menu.Item>
-            <Menu.Item>Settings</Menu.Item>
             <Menu.Divider />
             <Menu.Item onClick={logout} >Logout</Menu.Item>
           </Menu.Dropdown>

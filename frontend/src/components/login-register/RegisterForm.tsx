@@ -1,7 +1,7 @@
 import { Box, TextInput, PasswordInput, Button, Container, Alert, Text } from '@mantine/core'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { handleEmailValidator } from './ValidationFunction'
+import { handleEmailValidator } from '../../utils/EmailValidator'
 
 const RegisterForm = () => {
     const navigate = useNavigate();

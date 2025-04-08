@@ -2,7 +2,7 @@ import { Box, TextInput, PasswordInput, Button, Container, Alert, Text } from '@
 import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { handleEmailValidator } from './ValidationFunction';
+import { handleEmailValidator } from '../../utils/EmailValidator';
 
 const LoginForm = () => {
     const navigate = useNavigate();
