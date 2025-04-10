@@ -19,8 +19,8 @@ const LoginForm = () => {
         try {
             // await axiosClient.post('/login', { loginEmail, loginPassword })
             sessionStorage.setItem("isLogged", "true");
-            navigate("/home")
             close();
+            navigate("/home")
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const response = error.response;

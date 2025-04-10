@@ -1,16 +1,17 @@
-import React from 'react'
 import './App.css'
 import '@mantine/core/styles.css';
-import { AppShell, Burger, Button, Group, Image } from '@mantine/core';
+import { AppShell, Burger, Button, Grid, Group, Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import LoginRegisterDrawer from './components/LoginRegisterDrawer';
-import UserDropdown from './components/UserDropdown';
+import UserDropdown from './components/userProfile/UserDropdown';
+import { useLogout } from './components/login-register/useLogout';
 
 function App() {
   const navigate = useNavigate();
   const [opened, { toggle }] = useDisclosure();
+  const { logout } = useLogout();
 
   return (
     // <AppShell color='#F0F0F0'
@@ -24,19 +25,21 @@ function App() {
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
             {/* TODO: APP LOGO */}
-            <Group ml="xl" gap={0} visibleFrom="sm">
-              <Button onClick={() => { navigate("home") }} >Home</Button>
-              <Button onClick={() => { navigate("about-us") }} >About Us</Button>
-              <Button onClick={() => { navigate("contact-us") }} >Contacts</Button>
-              <Button>Support</Button>
-              <LoginRegisterDrawer />
-              <UserDropdown />
-              {/* {sessionStorage.getItem("isLogged") === "false" ? ( <LoginRegister /> ) : 
-                (<>
-                  <button className={classes.headerButton} onClick={() => navigate("/order")}>SHIPPING</button>
-                  <UserDropdown />
-                </>)} */}
-            </Group>
+            <Grid mx={75} visibleFrom="sm" w="100%" style={{ display: 'flex', justifyContent: 'space-between' }}  >
+            {/* <Group ml="xl" gap={0} visibleFrom="sm" > */}
+              <Grid.Col span={9} >
+                <Group gap="sm">
+                  <Button onClick={() => { navigate("home") }} >Home</Button>
+                  <Button onClick={() => { navigate("about-us") }} >About Us</Button>
+                  <Button onClick={() => { navigate("contact-us") }} >Contacts</Button>
+                  <Button>Support</Button>
+                </Group>
+              </Grid.Col>
+              <Grid.Col span={3} style={{ display: 'flex', justifyContent: 'flex-end' }} >
+                {sessionStorage.getItem("isLogged") === "false"
+                ? ( <LoginRegisterDrawer /> ) : (<UserDropdown />)}
+              </Grid.Col>
+            </Grid>
           </Group>
         </Group>
       </AppShell.Header>
@@ -46,10 +49,11 @@ function App() {
         <Button onClick={() => { toggle(); navigate("about-us") }} >About Us</Button>
         <Button onClick={() => { toggle(); navigate("contact-us") }} >Contacts</Button>
         <Button>Support</Button>
-        {/* <Button>Login/Register</Button> */}
-        <Button onClick={() => { toggle(); navigate("profile") }} >Profile</Button>
-        {/* <LoginRegister />
-        <UserDropdown /> */}
+        {sessionStorage.getItem("isLogged") === "true"
+          && ( <>
+                <Button onClick={() => { toggle(); navigate("profile") }} >Profile</Button>
+                <Button onClick={() => { toggle(); logout() }} >Logout</Button>
+          </>)}
         {/* TODO: SEARCH BAR HERE? */}
       </AppShell.Navbar>
 

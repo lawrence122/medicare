@@ -1,11 +1,9 @@
-import { Avatar, Button, Center, Container, Divider, Fieldset, Flex, Grid, Group, Image, SimpleGrid, Tabs, Text, TextInput } from '@mantine/core'
-import { DatePicker } from '@mantine/dates';
-import { useDisclosure } from '@mantine/hooks';
-import React, { useState } from 'react'
+import { Avatar, Center, Container, Divider, Fieldset, Grid, SimpleGrid, Tabs, Text, TextInput } from '@mantine/core'
+// import { useDisclosure } from '@mantine/hooks';
 import DeleteAccount from '../userProfile/DeleteAccount';
 
 const ProfilePage = () => {
-    const [opened, { toggle }] = useDisclosure();
+    // const [opened, { toggle }] = useDisclosure();
     // const [dob, setDOB] = useState<Date | null>(null);
     
   return (

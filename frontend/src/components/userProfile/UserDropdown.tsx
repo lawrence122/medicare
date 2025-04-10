@@ -1,21 +1,10 @@
 import { Menu, Avatar } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-// import axiosClient from '../axiosClient';
-import React from 'react';
+import { useLogout } from '../login-register/useLogout';
 
 const UserDropdown = () => {
-    const navigate =  useNavigate()
-
-    const logout = async() => {
-      try {
-        // await axiosClient.post('/logout')
-        console.log(sessionStorage.getItem("isLogged"));
-        sessionStorage.setItem("isLogged", "false");
-        navigate("/home");
-      } catch (error) {
-        console.error("Logout failed:", error);
-      }
-    };
+  const { logout } = useLogout();
+  const navigate = useNavigate();
 
     return (
         <Menu trigger="click-hover" openDelay={100} closeDelay={500} shadow="md" width={200} zIndex={1600} withArrow >

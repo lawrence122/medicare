@@ -2,6 +2,7 @@ import { Box, TextInput, PasswordInput, Button, Container, Alert, Text } from '@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { handleEmailValidator } from '../../utils/EmailValidator'
+import axios from 'axios';
 
 const RegisterForm = () => {
     const navigate = useNavigate();
@@ -28,10 +29,10 @@ const RegisterForm = () => {
         // try {
         //     const response = await axiosClient.post('/register', { registerEmail, registerPassword })
         //     if(response.status === 201) {
-        //         console.log('Register submitted:', { email: registerEmail, password: registerPassword });
-        //         // navigate somewhere else or login immediatly?
-        //         navigate("/....");
-        //         close();
+                console.log('Register submitted:', { email: registerEmail, password: registerPassword });
+                sessionStorage.setItem("isLogged", "true");
+                close();
+                navigate("/onboarding");
         //     } else {
         //         setRegisterError(response.data.error);
         //     }

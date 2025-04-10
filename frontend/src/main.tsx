@@ -4,7 +4,6 @@ import '@mantine/dates/styles.css';
 import './index.css'
 import App from './App.tsx'
 import { createTheme, MantineProvider } from '@mantine/core'
-import React from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import HomePage from './components/pages/HomePage.tsx'
 import ErrorPage from './components/pages/ErrorPage.tsx'
@@ -12,7 +11,8 @@ import Testing from './components/pages/Testing.tsx'
 import ProfilePage from './components/pages/ProfilePage.tsx'
 import ContactUs from './components/pages/ContactUs.tsx'
 import AboutUs from './components/pages/AboutUs.tsx'
-import MedicationDetails from './components/MedicationDetails.tsx'
+import MedicationPage from './components/pages/MedicationPage.tsx';
+import Onboarding from './components/onboarding/Onboarding.tsx';
 
 const router = createBrowserRouter([
   {
@@ -36,11 +36,15 @@ const router = createBrowserRouter([
       },
       {
         path: ":medication", //TODO
-        element: <MedicationDetails />,
+        element: <MedicationPage />,
         // loader: ({ params }) => {
         //   (`Main: ${console.log(params)}`)
         //   // return fetchUserData(params.userId);
         // },
+      },
+      {
+        path: "onboarding",
+        element: <Onboarding />,
       },
       {
         path: "profile",
