@@ -6,6 +6,7 @@ import { IconBookmarkOff, IconBookmarkPlus, IconEye, IconSearch, IconX } from "@
 import AddReview from "../AddReview";
 import ScrollToTop from "../ScrollToTop";
 import { medications } from "../../utils/testData";
+import { SaveMedication } from "../SaveMedication";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -173,7 +174,8 @@ const HomePage = () => {
                       {
                         sessionStorage.getItem('isLogged') === 'true' && (
                           <Group justify="space-between" style={{ marginTop: 'auto', paddingTop: 16 }}>
-                            <Button 
+                            <SaveMedication {...item} />
+                            {/* <Button 
                               w={150}
                               type="submit"
                               variant="filled"
@@ -182,7 +184,7 @@ const HomePage = () => {
                               loading={isSaving === item.id}
                             >
                               {isSaved ? "Unsave" : "Save"}
-                            </Button>
+                            </Button> */}
                               <AddReview {...item} />
                           </Group>
                           )

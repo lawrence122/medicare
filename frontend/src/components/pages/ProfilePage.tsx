@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Center, Container, Divider, Fieldset, Grid, Group, NumberInput, Paper, Select, SimpleGrid, Slider, Space, Stack, Switch, Tabs, Text, TextInput, Title } from '@mantine/core'
+import { Avatar, Button, Card, Center, Container, Divider, Fieldset, Grid, Group, NumberInput, Paper, Select, SimpleGrid, Slider, Space, Switch, Tabs, Text, TextInput } from '@mantine/core'
 import DeleteAccount from '../userProfile/DeleteAccount';
 import { conditionsTestData, allergiesTestData } from '../../utils/testData';
 import CustomCombobox from '../onboarding/CustomCombobox';

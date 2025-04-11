@@ -65,7 +65,14 @@ const AddReview = (medication: MedicationItem) => {
                                 withGroup={false}
                                 groups={[]} required={true}
                                 multiSelect={false}
-                                options={["Daily", "Weekly", "Bi-weekly", "Monthly", "Bi-monthly"]}
+                                options={[
+                                    'Once daily',
+                                    'Twice daily',
+                                    'Three times daily',
+                                    'Every 6 hours',
+                                    'As needed',
+                                    'Weekly'
+                                ]}
                                 {...form.getInputProps('frequency')}
                             />
                             <CustomCombobox
