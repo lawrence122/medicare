@@ -9,22 +9,21 @@ export function SaveMedication(medication: MedicationItem) {
   const [loading, setLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(0);
   const [opened, { open, close }] = useDisclosure(false);
-  const [currentMedication, setCurrentMedication] = useState<{ id: number; title: string; isSaved: boolean } | null>(null);
+  const [currentMedication, setCurrentMedication] = useState<MedicationItem | null>(null);
   const [dosage, setDosage] = useState('');
   const [frequency, setFrequency] = useState('');
   const [routeAdmin, setRouteAdmin] = useState('');
 
-  const handleSaveClick = (medicationId: number, medicationTitle: string) => {
-    savedMedications.has(medicationId) ? handleSave(true) : open()
+  const handleSaveClick = (medication: MedicationItem) => {
+    setCurrentMedication(medication);
+    savedMedications.has(medication.id) ? handleSave(true) : open()
   };
 
   const handleSave = async (isSaved: boolean) => {
     if (!currentMedication) return;
 
-    const medicationId = !isSaved ? currentMedication?.id || 0 : currentMedication?.id || 0;
-
     setLoading(true);
-    setIsSaving(medicationId);
+    setIsSaving(medication.id);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -55,7 +54,7 @@ export function SaveMedication(medication: MedicationItem) {
             w={150}
             variant="filled"
             loading={isSaving === medication.id}
-            onClick={() => handleSaveClick(medication.id, medication.title)}
+            onClick={() => handleSaveClick(medication)}
             color={savedMedications.has(medication.id) ? "#D33F49" : "thistle"}
             leftSection={savedMedications.has(medication.id) ? <IconBookmarkOff size={18} /> : <IconBookmarkPlus size={18} />}
         >
