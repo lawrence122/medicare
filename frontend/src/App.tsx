@@ -19,14 +19,14 @@ function App() {
       header={{ height: 60 }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
       padding="md"
+      bg="#F0F0F0"
     >
-      <AppShell.Header>
+      <AppShell.Header >
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
             {/* TODO: APP LOGO */}
             <Grid mx={75} visibleFrom="sm" w="100%" style={{ display: 'flex', justifyContent: 'space-between' }}  >
-            {/* <Group ml="xl" gap={0} visibleFrom="sm" > */}
               <Grid.Col span={9} >
                 <Group gap="sm">
                   <Button onClick={() => { navigate("home") }} >Home</Button>

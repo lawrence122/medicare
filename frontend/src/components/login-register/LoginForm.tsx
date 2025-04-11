@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { handleEmailValidator } from '../../utils/EmailValidator';
+import { IconLogin2 } from '@tabler/icons-react';
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -62,6 +63,7 @@ const LoginForm = () => {
             </Box>
             <Box mt="xl">
                 <Button type="submit" fullWidth>
+                    <IconLogin2 stroke={2} />
                     Login
                 </Button>
             </Box>

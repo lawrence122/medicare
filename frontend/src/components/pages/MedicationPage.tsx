@@ -5,6 +5,7 @@ import TOC from '../TOC';
 import AddReview from '../AddReview';
 import ReviewCard from '../ReviewCard';
 import MedicationDetails from '../MedicationDetails';
+import ScrollToTop from '../ScrollToTop';
 
 const MedicationPage = () => {
     const location = useLocation();
@@ -226,7 +227,7 @@ return(
                 <SimpleGrid cols={1} >
                     <Group justify="space-between">
                         <Text size={"30px"} fw={700} td={"underline"} >Reviews</Text>
-                        <AddReview />
+                        <AddReview {...medication} />
                     </Group>
                     {reviews?.map((review) => (
                         <ReviewCard id={review.id} username={review.username} createdOn={review.createdOn} comment={review.comment} />
@@ -234,6 +235,8 @@ return(
                 </SimpleGrid>
             </Grid.Col>
         </Grid>
+
+        <ScrollToTop />
     </Container>
   )
 }

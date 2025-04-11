@@ -1,6 +1,7 @@
 import { Menu, Avatar } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../login-register/useLogout';
+import { IconLogout } from '@tabler/icons-react';
 
 const UserDropdown = () => {
   const { logout } = useLogout();
@@ -14,7 +15,9 @@ const UserDropdown = () => {
           <Menu.Dropdown >
             <Menu.Item onClick={() => {navigate('/profile')}}>My Account</Menu.Item>
             <Menu.Divider />
-            <Menu.Item onClick={logout} >Logout</Menu.Item>
+            <Menu.Item onClick={logout} style={{ flex: 'row', flexDirection: "row" }} leftSection={<IconLogout stroke={2} />} >
+              Logout
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       );

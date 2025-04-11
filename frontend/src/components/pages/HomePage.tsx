@@ -1,86 +1,195 @@
-import { useState } from "react";
-import { Card, Container, Group, ScrollArea, Text, TextInput } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useEffect, useState } from "react";
+import { ActionIcon, Button, Card, Center, Container, Flex, Group, Loader, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { MedicationItem } from "../../interfaces/MedicationItem";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { getGeneralContent } from "../../utils/MedicationAPI";
+import { IconBookmarkOff, IconBookmarkPlus, IconEye, IconSearch, IconX } from "@tabler/icons-react";
+import AddReview from "../AddReview";
+import ScrollToTop from "../ScrollToTop";
+import { medications } from "../../utils/testData";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredItems, setFilteredItems] = useState<MedicationItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSaving, setIsSaving] = useState<number>();
+  const [savedMedications, setSavedMedications] = useState<Set<number>>(new Set());
+
+  const handleSave = async (isSaved: boolean, medicationId: number, medicationTitle: string) => {
+    setIsSaving(medicationId);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      if (isSaved) {
+        setSavedMedications(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(medicationId);
+          return newSet;
+        });
+        console.log(`Unsaved medication: ${medicationTitle}`);
+      } else {
+        setSavedMedications(prev => new Set(prev).add(medicationId));
+        console.log(`Saved medication: ${medicationTitle}`);
+      }
+    } catch (error) {
+      console.error('Failed to save:', error);
+    } finally {
+      setIsSaving(0);
+    }
+  };
+
+  const viewMore = (item: MedicationItem) => {
+    navigate(`/${item.title.replace(/\s+/g, '_').toLowerCase()}`, { state: item } ) // .replace(/\s+/g, '_') replaces " " by "_"
+  }
+
+  const mockMedicationApi = {
+    searchMedications: async (query: string): Promise<MedicationItem[]> => {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const mockData = medications;
+
+      return mockData.filter(item => 
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.description.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+  };
+
+  useEffect(() => {
+    const searchMedications = async () => {
+      if (!searchQuery.trim()) {
+        setFilteredItems([]);
+        return;
+      }
   
-  const [value, setValue] = useState('Clear me');
-  const [visible, { toggle }] = useDisclosure(false);
-
-  // getGeneralContent()
-  //   .then(data => console.log("General Content:", data))
-  //   .catch(error => console.error("Error:", error));
-
-  // // To search for a specific medication:
-  // searchContent("ibuprofen", "medications")
-  //   .then(data => console.log("Search Results:", data))
-  //   .catch(error => console.error("Error:", error));
-
-  const [items] = useState<MedicationItem[]>([
-    {
-      id: 1,
-      title: "First Item",
-      description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-    },
-    {
-      id: 2,
-      title: "Second Item",
-      description: "This is the second item description",
-    },
-    {
-      id: 3,
-      title: "Third Item",
-      description: "This is the third item description",
-    },
-  ]);
+      setIsSearching(true);
+      try {
+        const results = await mockMedicationApi.searchMedications(searchQuery);
+        setFilteredItems(results);
+      } catch (error) {
+        console.error('Search failed:', error);
+        setFilteredItems([]);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+  
+    // prevent excessive calls
+    const debounceTimer = setTimeout(searchMedications, 300);
+    
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
 
   return (
-    <Container fluid mx={"5%"} style={{ height: '100%', display: 'flex', flexDirection: 'column' }} >
-        <div style={{ position: 'sticky',
-            top: 60,
-            zIndex: 100,
-            backgroundColor: 'white',
-            padding: '10px',
-        }} >
-          <TextInput
-            placeholder="Search medication..."
-            size="xl"
-            style={{ width: "90%", margin: "25px auto" }}
-            value={searchQuery}
-            onChange={() => { console.log(`Searching for somethingg: ${searchQuery}`) }} // TODO: fix this
-          />
-        </div>
-
-      <ScrollArea.Autosize mt={"15"} style={{ maxHeight: 'calc(100vh - 60px)' }} >
-        <Group>
-          {items.map((item) => (
-            <Card
-              key={item.id}
-              w={400}
-              shadow="sm" 
-              p="lg" mb="sm"
-              // color="ultra-violet"
-              onClick={() => { navigate(`/${item.title.replace(/\s+/g, '_').toLowerCase()}`, { state: item } ) }} // .replace(/\s+/g, '_') replaces " " by "_"
-            >
-              <Text fw={500} >
-                {item.title}
+    <Container fluid mx={"5%"} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* Search Input */}
+      <div style={{ 
+        position: 'sticky',
+        top: 60,
+        zIndex: 100,
+        padding: '10px',
+        backgroundColor: 'var(--mantine-color-body)',
+      }}>
+        <TextInput
+          placeholder="Search medication, condition..."
+          size="xl"
+          style={{ width: "90%", margin: "25px auto" }}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.currentTarget.value)}
+          rightSection={
+            isSearching ? (
+              <Loader size="sm" />
+            ) : searchQuery ? (
+              <ActionIcon onClick={() => setSearchQuery('')}>
+                <IconX size={18} />
+              </ActionIcon>
+            ) : null
+          }
+        />
+      </div>
+  
+      {/* Results Area */}
+      <ScrollArea.Autosize mt={"15"} style={{ maxHeight: 'calc(100vh - 60px)' }}>
+        {isSearching ? (
+          <Center style={{ height: '200px' }}>
+            <Loader size="xl" />
+          </Center>
+        ) : searchQuery && filteredItems.length === 0 ? (
+          <Center style={{ height: '200px' }}>
+            <Stack align="center">
+              <IconSearch size={48} color="gray" />
+              <Text size="xl" c="dimmed">No medications found</Text>
+              <Text size="sm" c="dimmed">
+                Try searching for something else
               </Text>
-              <Text
-                size="sm" c="dimmed"
-                lineClamp={4}
+              <Button 
+                variant="subtle" 
+                onClick={() => setSearchQuery('')}
+                leftSection={<IconX size={14} />}
               >
-                {item.description}
-              </Text>
-            </Card>
-          ))}
-        </Group>
+                Clear search
+              </Button>
+            </Stack>
+          </Center>
+        ) : (
+          <Group align="stretch">
+            {(searchQuery ? filteredItems : medications).map((item) => {
+              const isSaved = savedMedications.has(item.id);
+              
+              return (
+                <Card key={item.id} w={400} shadow="sm" p="lg" mb="sm" >
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSave(isSaved, item.id, item.title)
+                  }}>
+                    <Flex direction="column" justify="space-between" style={{ height: '100%' }}>
+                      <div>
+                        <Group justify="space-between" mb="md">
+                          <Text fw={500} onClick={() => viewMore(item)} style={{ cursor: 'pointer' }}>
+                            {item.title}
+                          </Text>
+                          <Button 
+                            type="submit"
+                            variant="filled" 
+                            size="compact-sm"
+                            color={isSaved ? "#D33F49" : "thistle"}
+                            leftSection={isSaved ? <IconBookmarkOff size={18} /> : <IconBookmarkPlus size={18} />}
+                            loading={isSaving === item.id}
+                          >
+                            {isSaved ? "Unsave" : "Save"}
+                          </Button>
+                        </Group>
+                        <Text
+                          size="sm" 
+                          c="dimmed"
+                          lineClamp={4}
+                          onClick={() => viewMore(item)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {item.description}
+                        </Text>
+                      </div>
+
+                      <Group justify="space-between" style={{ marginTop: 'auto', paddingTop: 16 }}>
+                        <Button 
+                          w={150} 
+                          variant="subtle" 
+                          onClick={() => viewMore(item)} 
+                          leftSection={<IconEye size={24} />}
+                        >
+                          View More
+                        </Button>
+                        <AddReview {...item} />
+                      </Group>
+                    </Flex>
+                  </form>
+              </Card>
+              );
+            })}
+          </Group>
+        )}
       </ScrollArea.Autosize>
+      <ScrollToTop />
     </Container>
   );
 };

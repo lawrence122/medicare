@@ -104,8 +104,9 @@ const theme = createTheme({
       '#263A28',
       '#1E2E20'
     ],
-    // Anti-flash white: F0F0F0
-    // Night: F0F0F0
+    // Anti-flash white: #F0F0F0
+    // Night: #F0F0F0
+    // smt red: #D33F49
   },
   primaryColor: 'thistle',
   primaryShade: 6,
