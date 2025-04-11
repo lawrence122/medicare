@@ -11,14 +11,23 @@ const LoginForm = () => {
     const [loginPassword, setLoginPassword] = useState('');
     const [loginError, setLoginError] = useState<string | null>(null);
     const [emailError, setEmailError] = useState<string | null>(null);
-
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
+        setIsLoading(true)
         e.preventDefault();
-        setEmailError(handleEmailValidator(loginEmail));
+        const error = handleEmailValidator(loginEmail)
+        if (error) {
+            setIsLoading(false);
+            setEmailError(error);
+            
+            return;
+        }
     
         try {
+            // TODO
             // await axiosClient.post('/login', { loginEmail, loginPassword })
+            await new Promise(resolve => setTimeout(resolve, 500));
             sessionStorage.setItem("isLogged", "true");
             close();
             navigate("/home")
@@ -30,6 +39,8 @@ const LoginForm = () => {
                     setLoginError(errorMessage ? errorMessage : null);
                 }
             }
+        } finally {
+            setIsLoading(false)
         }
       };
   return (
@@ -62,10 +73,7 @@ const LoginForm = () => {
                 />
             </Box>
             <Box mt="xl">
-                <Button type="submit" fullWidth>
-                    <IconLogin2 stroke={2} />
-                    Login
-                </Button>
+                <Button type="submit" fullWidth leftSection={<IconLogin2 stroke={2} />} loading={isLoading} >Login</Button>
             </Box>
         </form>
     </Container>

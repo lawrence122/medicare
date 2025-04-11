@@ -15,21 +15,30 @@ const RegisterForm = () => {
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [registerError, setRegisterError] = useState<string | null>(null);
     const [emailError, setEmailError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
 
-    const handleRegisterPassword = () => {
-        setPasswordError((registerPassword !== registerConfirmPassword) ? 'Passwords do not match' : null);
-        return;
-    };
-    
     const handleRegisterSubmit = async (e: React.FormEvent) => {
+        setIsLoading(true)
         e.preventDefault();
-        setEmailError(handleEmailValidator(registerEmail));
-        handleRegisterPassword();
+        const error = handleEmailValidator(registerEmail)
+        if (error) {
+            setIsLoading(false);
+            setEmailError(error);
+            return;
+        }
 
-        // try {
+        if (registerPassword !== registerConfirmPassword) {
+            setIsLoading(false);
+            setPasswordError('Passwords do not match');
+            return;
+        }
+
+        // TODO
+        try {
         //     const response = await axiosClient.post('/register', { registerEmail, registerPassword })
         //     if(response.status === 201) {
+                await new Promise(resolve => setTimeout(resolve, 500));
                 console.log('Register submitted:', { email: registerEmail, password: registerPassword });
                 sessionStorage.setItem("isLogged", "true");
                 close();
@@ -37,15 +46,17 @@ const RegisterForm = () => {
         //     } else {
         //         setRegisterError(response.data.error);
         //     }
-        // } catch (error) {
-        //     if (axios.isAxiosError(error)) {
-        //         const response = error.response;
-        //         if (response?.status === 409) {
-        //             const errorMessage = (response.data as { error?: string }).error;
-        //             setRegisterError(errorMessage ? errorMessage : null);
-        //         }
-        //     }
-        // }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const response = error.response;
+                if (response?.status === 409) {
+                    const errorMessage = (response.data as { error?: string }).error;
+                    setRegisterError(errorMessage ? errorMessage : null);
+                }
+            }
+        } finally {
+            setIsLoading(false)
+        }
     };
 
 
@@ -86,14 +97,11 @@ const RegisterForm = () => {
                     value={registerConfirmPassword}
                     error={passwordError}
                     onChange={(e) => setRegisterConfirmPassword(e.currentTarget.value)}
-                    onBlur={handleRegisterPassword}
+                    // onBlur={handleRegisterPassword}
                 />
             </Box>
             <Box mt="xl">
-                <Button type="submit" fullWidth>
-                    <IconLogin2 stroke={2} />
-                    Register
-                </Button>
+                <Button type="submit" fullWidth leftSection={<IconLogin2 stroke={2} />} loading={isLoading} >Register</Button>
             </Box>
         </form>
     </Container>

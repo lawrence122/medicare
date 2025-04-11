@@ -6,6 +6,7 @@ export const useLogout = () => {
 
   const logout = async () => {
     try {
+      // TODO
       // await axiosClient.post('/logout')
       console.log("logging out");
       sessionStorage.setItem("isLogged", "false");

@@ -17,6 +17,7 @@ const HomePage = () => {
   const [savedMedications, setSavedMedications] = useState<Set<number>>(new Set());
 
   const handleSave = async (isSaved: boolean, medicationId: number, medicationTitle: string) => {
+    // TODO
     setIsSaving(medicationId);
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -43,6 +44,7 @@ const HomePage = () => {
   }
 
   const mockMedicationApi = {
+    // TODO
     searchMedications: async (query: string): Promise<MedicationItem[]> => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
