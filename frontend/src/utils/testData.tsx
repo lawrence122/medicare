@@ -55,7 +55,95 @@ export const medications : MedicationItem[] = [
       title: "Amoxicillin",
       description: "Antibiotic for bacterial infections",
     },
-  ];
+];
+
+export const sampleReviews = [
+    {
+      id: 1,
+      username: "JohnDoe42",
+      createdOn: new Date("2024-05-15T09:30:00"),
+      dosage: "500mg",
+      frequency: "Twice daily",
+      routeAdmin: ["Oral", "With food"],
+      duration: 30,
+      sideEffect: ["Mild nausea", "Headache", "Dizziness"],
+      severity: "Moderate",
+      onset: "Within 2 hours",
+      lasted: 3,
+      impact: "Reduced daily activities",
+      helpSought: "Consulted pharmacist",
+      improved: "Symptoms decreased after 1 week",
+      medStopped: "No"
+    },
+    {
+      id: 2,
+      username: "WellnessSeeker",
+      createdOn: new Date("2024-06-02T14:15:00"),
+      dosage: "250mg",
+      frequency: "Every 6 hours",
+      routeAdmin: ["Sublingual"],
+      duration: 10,
+      sideEffect: ["Dry mouth"],
+      severity: "Mild",
+      onset: "After first dose",
+      lasted: 2,
+      impact: "Minor discomfort",
+      helpSought: "No",
+      improved: "Yes",
+      medStopped: "No"
+    },
+    {
+      id: 3,
+      username: "RecoveringPatient",
+      createdOn: new Date("2024-04-28T18:45:00"),
+      dosage: "1000mg",
+      frequency: "Once daily at bedtime",
+      routeAdmin: ["Intravenous"],
+      duration: 14,
+      sideEffect: ["Injection site redness", "Fatigue"],
+      severity: "Mild to moderate",
+      onset: "Day 3 of treatment",
+      lasted: 5,
+      impact: "Required rest periods",
+      helpSought: "Called doctor's office",
+      improved: "Gradual improvement",
+      medStopped: "After course completed"
+    },
+    {
+      id: 4,
+      username: "NewToMeds",
+      createdOn: new Date("2024-06-10T11:20:00"),
+      dosage: "200mg",
+      frequency: "As needed",
+      routeAdmin: ["Topical cream"],
+      duration: 7,
+      sideEffect: [],
+      severity: "None",
+      onset: "N/A",
+      lasted: 0,
+      impact: "None",
+      helpSought: "N/A",
+      improved: "Yes",
+      medStopped: "When symptoms resolved"
+    },
+    {
+      id: 5,
+      username: "ChronicConditionUser",
+      createdOn: new Date("2024-03-15T16:30:00"),
+      dosage: "750mg",
+      frequency: "Three times weekly",
+      routeAdmin: ["Oral suspension"],
+      duration: 90,
+      sideEffect: ["Mild stomach upset"],
+      severity: "Mild",
+      onset: "After 2 weeks",
+      lasted: 21,
+      impact: "Dietary adjustments needed",
+      helpSought: "Nutritionist consultation",
+      improved: "Condition stabilized",
+      medStopped: "Ongoing treatment"
+    }
+];
 
 export const symptomsTestData = [
     {

@@ -13,6 +13,7 @@ import ContactUs from './components/pages/ContactUs.tsx'
 import AboutUs from './components/pages/AboutUs.tsx'
 import MedicationPage from './components/pages/MedicationPage.tsx';
 import Onboarding from './components/onboarding/Onboarding.tsx';
+import { GlobalProvider } from './utils/GlobalContext.tsx';
 
 const router = createBrowserRouter([
   {
@@ -115,7 +116,9 @@ const theme = createTheme({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MantineProvider theme={theme} defaultColorScheme='light' >
-      <RouterProvider router={router} />
+      <GlobalProvider>
+        <RouterProvider router={router} />
+      </GlobalProvider>
     </MantineProvider>
   </StrictMode>,
 )

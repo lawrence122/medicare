@@ -36,8 +36,8 @@ function App() {
                 </Group>
               </Grid.Col>
               <Grid.Col span={3} style={{ display: 'flex', justifyContent: 'flex-end' }} >
-                {sessionStorage.getItem("isLogged") === "false"
-                ? ( <LoginRegisterDrawer /> ) : (<UserDropdown />)}
+                {sessionStorage.getItem("isLogged") === "true"
+                ? ( <UserDropdown /> ) : (<LoginRegisterDrawer />)}
               </Grid.Col>
             </Grid>
           </Group>

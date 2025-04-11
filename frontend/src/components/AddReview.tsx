@@ -5,14 +5,20 @@ import CustomCombobox from './onboarding/CustomCombobox';
 import { IconPlus } from '@tabler/icons-react';
 import { MedicationItem } from '../interfaces/MedicationItem';
 import { useForm } from '@mantine/form';
+import { useGlobal } from '../utils/GlobalContext';
 
 const AddReview = (medication: MedicationItem) => {
     const [opened, { open, close }] = useDisclosure(false);
     const [loading, { open: startLoading, close: stopLoading }] = useDisclosure(false);
 
+    const { reviews, addReview, } = useGlobal();
+
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
+            id: reviews.length + 1,
+            username: sessionStorage.getItem('username'),
+            createdOn: new Date(),
             dosage: '',
             frequency: '',
             routeAdmin: [],
@@ -37,6 +43,7 @@ const AddReview = (medication: MedicationItem) => {
         try {
             await asyncSubmit(values);
             console.log(values);
+            addReview(values)
             form.reset();
         } catch (error) {
             console.error('Submission error:', error);

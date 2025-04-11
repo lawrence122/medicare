@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { ActionIcon, Button, Card, Center, Container, Flex, Group, Loader, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { MedicationItem } from "../../interfaces/MedicationItem";
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { IconBookmarkOff, IconBookmarkPlus, IconEye, IconSearch, IconX } from "@tabler/icons-react";
 import AddReview from "../AddReview";
 import ScrollToTop from "../ScrollToTop";
@@ -66,6 +65,7 @@ const HomePage = () => {
   
       setIsSearching(true);
       try {
+        // TODO
         const results = await mockMedicationApi.searchMedications(searchQuery);
         setFilteredItems(results);
       } catch (error) {
@@ -150,15 +150,13 @@ const HomePage = () => {
                           <Text fw={500} onClick={() => viewMore(item)} style={{ cursor: 'pointer' }}>
                             {item.title}
                           </Text>
-                          <Button 
-                            type="submit"
-                            variant="filled" 
+                          <Button
+                            variant="subtle"
                             size="compact-sm"
-                            color={isSaved ? "#D33F49" : "thistle"}
-                            leftSection={isSaved ? <IconBookmarkOff size={18} /> : <IconBookmarkPlus size={18} />}
-                            loading={isSaving === item.id}
+                            onClick={() => viewMore(item)} 
+                            leftSection={<IconEye size={24} />}
                           >
-                            {isSaved ? "Unsave" : "Save"}
+                            View More
                           </Button>
                         </Group>
                         <Text
@@ -172,17 +170,23 @@ const HomePage = () => {
                         </Text>
                       </div>
 
-                      <Group justify="space-between" style={{ marginTop: 'auto', paddingTop: 16 }}>
-                        <Button 
-                          w={150} 
-                          variant="subtle" 
-                          onClick={() => viewMore(item)} 
-                          leftSection={<IconEye size={24} />}
-                        >
-                          View More
-                        </Button>
-                        <AddReview {...item} />
-                      </Group>
+                      {
+                        sessionStorage.getItem('isLogged') === 'true' && (
+                          <Group justify="space-between" style={{ marginTop: 'auto', paddingTop: 16 }}>
+                            <Button 
+                              w={150}
+                              type="submit"
+                              variant="filled"
+                              color={isSaved ? "#D33F49" : "thistle"}
+                              leftSection={isSaved ? <IconBookmarkOff size={18} /> : <IconBookmarkPlus size={18} />}
+                              loading={isSaving === item.id}
+                            >
+                              {isSaved ? "Unsave" : "Save"}
+                            </Button>
+                              <AddReview {...item} />
+                          </Group>
+                          )
+                        }
                     </Flex>
                   </form>
               </Card>

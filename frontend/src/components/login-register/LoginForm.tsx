@@ -29,6 +29,7 @@ const LoginForm = () => {
             // await axiosClient.post('/login', { loginEmail, loginPassword })
             await new Promise(resolve => setTimeout(resolve, 500));
             sessionStorage.setItem("isLogged", "true");
+            sessionStorage.setItem("username", loginEmail.split('@')[0]);
             close();
             navigate("/home")
         } catch (error) {

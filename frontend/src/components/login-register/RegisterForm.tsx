@@ -41,6 +41,7 @@ const RegisterForm = () => {
                 await new Promise(resolve => setTimeout(resolve, 500));
                 console.log('Register submitted:', { email: registerEmail, password: registerPassword });
                 sessionStorage.setItem("isLogged", "true");
+                sessionStorage.setItem("username", registerEmail.split('@')[0]);
                 close();
                 navigate("/onboarding");
         //     } else {

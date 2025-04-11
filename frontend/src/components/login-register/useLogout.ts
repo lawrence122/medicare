@@ -9,7 +9,8 @@ export const useLogout = () => {
       // TODO
       // await axiosClient.post('/logout')
       console.log("logging out");
-      sessionStorage.setItem("isLogged", "false");
+      sessionStorage.removeItem("isLogged");
+      sessionStorage.removeItem("username");
       navigate("/home");
     } catch (error) {
       console.error("Logout failed:", error);
