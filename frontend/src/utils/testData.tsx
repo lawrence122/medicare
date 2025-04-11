@@ -145,6 +145,24 @@ export const sampleReviews = [
     }
 ];
 
+// const [savedMeds, setSavedMeds] = useState([
+//   {
+//     id: 1,
+//     name: 'Ibuprofen',
+//     dosage: '200mg',
+//     frequency: 'Every 6 hours',
+//     description: 'Pain reliever and anti-inflammatory'
+//   },
+//   {
+//     id: 2,
+//     name: 'Amoxicillin',
+//     dosage: '500mg',
+//     frequency: 'Twice daily',
+//     description: 'Antibiotic for bacterial infections'
+//   },
+//   // Add more medications as needed
+// ]);
+
 export const symptomsTestData = [
     {
         label: "1. General/Whole Body",

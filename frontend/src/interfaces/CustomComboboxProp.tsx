@@ -8,6 +8,7 @@ export interface CustomComboboxProp extends Omit<ComboboxProps, 'children'> {
     groups: CustomComboboxItem[];
     multiSelect: boolean;
     required?: boolean,
+    readOnly?: boolean,
     value?: string | string[];
     onChange?: (value: string | string[]) => void;
     pillProps?: PillProps;

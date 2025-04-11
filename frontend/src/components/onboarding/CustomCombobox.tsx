@@ -9,6 +9,7 @@ const CustomCombobox = ({
   groups,
   multiSelect = false,
   required = false,
+  readOnly = false,
   value: externalValue,
   onChange,
   ...props
@@ -151,7 +152,7 @@ const CustomCombobox = ({
     >
       <Combobox.DropdownTarget>
         <PillsInput
-          label={label} required={required}
+          label={label} required={required} disabled={readOnly}
           onClick={() => combobox.openDropdown()}
           rightSection={loading ? <Loader size={18} /> : <Combobox.Chevron />}
         >
