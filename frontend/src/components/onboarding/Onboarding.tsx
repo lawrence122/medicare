@@ -23,26 +23,26 @@ const Onboarding = () => {
             allergies: [],
             consent: false,
         },
-        validate: {
-            name: (value) => (!value ? 'Name is required' : null),
-            dob: (value) => (!value ? 'Date of birth is required' : null),
-            age: (value) => {
-                if (!value) return 'Age is required';
-                if (value < 0) return 'Age cannot be negative';
-                if (value > 120) return 'Please enter a valid age';
-                return null;
-            },
-            weight: (value) => {
-                if (!value) return 'Weight is required';
-                if (typeof value === 'string') {
-                    const num = parseFloat(value);
-                    if (isNaN(num)) return 'Please enter a valid number';
-                    if (num <= 0) return 'Weight must be positive';
-                }
-                return null;
-            },
-            consent: (value) => (!value ? 'You must give consent to proceed' : null),
-        },
+        // validate: {
+        //     name: (value) => (!value ? 'Name is required' : null),
+        //     dob: (value) => (!value ? 'Date of birth is required' : null),
+        //     age: (value) => {
+        //         if (!value) return 'Age is required';
+        //         if (value < 0) return 'Age cannot be negative';
+        //         if (value > 120) return 'Please enter a valid age';
+        //         return null;
+        //     },
+        //     weight: (value) => {
+        //         if (!value) return 'Weight is required';
+        //         if (typeof value === 'string') {
+        //             const num = parseFloat(value);
+        //             if (isNaN(num)) return 'Please enter a valid number';
+        //             if (num <= 0) return 'Weight must be positive';
+        //         }
+        //         return null;
+        //     },
+        //     consent: (value) => (!value ? 'You must give consent to proceed' : null),
+        // },
     });
 
     const [isChecked, setIsChecked] = useState(form.values.consent);
@@ -53,18 +53,15 @@ const Onboarding = () => {
         form.clearFieldError('consent');
     };
 
-    const asyncSubmit = (values: any) =>
-        new Promise((resolve) => setTimeout(() => resolve(values), 1000));
-
     const getStarted = async (values: typeof form.values) => {
         console.log("get started")
         startLoading();
         try {
-            await asyncSubmit(values);
+            await new Promise((resolve) => setTimeout(() => resolve(resolve), 1000));
             // TODO: SAVE THE DATA
-            console.log("Form submitted:", values);
+            console.log(`Form submitted: ${values}`);
             form.reset();
-            navigate("home");
+            navigate("/home");
         } catch (error) {
             console.error('Submission error:', error);
         } finally {
@@ -159,7 +156,7 @@ const Onboarding = () => {
                             {form.errors.consent && ( <Text c="red" size="sm" mt={-2} ml={5}> {form.errors.consent} </Text> )}
                         </Stack>
                         
-                        <Button type="submit" >Get started</Button>
+                        <Button type="submit" loading={loading} loaderProps={{ type: "dots" }} >Get started</Button>
                     </Group>
                 </form>
             </Paper>

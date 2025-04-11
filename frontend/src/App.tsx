@@ -14,12 +14,10 @@ function App() {
   const { logout } = useLogout();
 
   return (
-    // <AppShell color='#F0F0F0'
     <AppShell
       header={{ height: 60 }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
-      padding="md"
-      bg="#F0F0F0"
+      padding="md" bg="#F0F0F0"
     >
       <AppShell.Header >
         <Group h="100%" px="md">
@@ -32,7 +30,6 @@ function App() {
                   <Button onClick={() => { navigate("home") }} >Home</Button>
                   <Button onClick={() => { navigate("about-us") }} >About Us</Button>
                   <Button onClick={() => { navigate("contact-us") }} >Contacts</Button>
-                  <Button>Support</Button>
                 </Group>
               </Grid.Col>
               <Grid.Col span={3} style={{ display: 'flex', justifyContent: 'flex-end' }} >

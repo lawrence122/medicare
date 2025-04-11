@@ -36,12 +36,8 @@ const router = createBrowserRouter([
 
       },
       {
-        path: ":medication", //TODO
+        path: ":medication",
         element: <MedicationPage />,
-        // loader: ({ params }) => {
-        //   (`Main: ${console.log(params)}`)
-        //   // return fetchUserData(params.userId);
-        // },
       },
       {
         path: "onboarding",

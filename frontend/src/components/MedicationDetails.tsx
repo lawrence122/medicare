@@ -1,5 +1,5 @@
 import { PieChart, RadarChart, RadialBarChart } from '@mantine/charts';
-import { Card, Grid, Group, Image, SimpleGrid, Text } from '@mantine/core';
+import { Card, Grid, Group, Image, Paper, SimpleGrid, Text } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
 import { data } from '../utils/testData';
 
@@ -34,12 +34,13 @@ const MedicationDetails = () => {
                 src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
                 variant='transparent'
                 radius={75}
-                w={250}
-                h={250}
+                w={250} h={250}
               />
             </Grid.Col>
             <Grid.Col span={{ lg: 9, md: 6 }}>
-              <Text>{medication.description}</Text>
+              <Paper radius='lg' bg='white' p={25} shadow='sm'>
+                <Text>{medication.description}</Text>
+              </Paper>
             </Grid.Col>
           </Grid>
       

@@ -7,6 +7,7 @@ import MedicationDetails from '../MedicationDetails';
 import ScrollToTop from '../ScrollToTop';
 import { useGlobal } from '../../utils/GlobalContext';
 import { sampleReviews } from '../../utils/testData';
+import { SaveMedication } from '../SaveMedication';
 
 const MedicationPage = () => {
   const location = useLocation();
@@ -53,7 +54,10 @@ const MedicationPage = () => {
     <Container fluid mx={50}>
       <Grid>
         {/* Table of Contents */}
-        <Grid.Col span={2} style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
+        <Grid.Col
+          span={2} style={{ position: 'sticky', top: 80, height: 'fit-content' }} 
+          display={{ base: 'none', md: 'grid' }}
+        >
           <Paper p="md" shadow="sm" radius="md" withBorder>
             <Text size="lg" fw={700} mb="sm">Contents</Text>
             {sections.map((section) => (
@@ -74,8 +78,11 @@ const MedicationPage = () => {
         <Grid.Col span={10}>
           {/* Overview Section */}
           <Box id="overview" mb={50}>
-            <Title size={35} fw={700} ta="center" td="underline" order={2} mb="xl">
+            <Title size={35} fw={700} ta="center" order={2} mb="xl">
               {medication.title}
+              <Group justify='flex-end' mb={20}>
+                <SaveMedication {...medication} />
+              </Group>
             </Title>
             <MedicationDetails />
           </Box>
