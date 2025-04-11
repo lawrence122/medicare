@@ -1,41 +1,49 @@
-import { Center, Group, SimpleGrid, Stack, Text } from '@mantine/core'
+import { Button, Center, SimpleGrid, Stack, Text } from '@mantine/core'
 
 const ErrorPage = () => {
   return (
-    <Center style={{ height: '100vh' }}>
-      <Stack align="center" gap="xs">
+    <Center style={{ height: '100vh', backgroundColor: '#f8f9fa' }}>
+      <Stack align="center" gap="md" style={{ marginTop: '-15vh' }}>
         <Text
-          size={"240px"}
-          fw={700}
-          color="thistle.2"
+          size="200px"
+          fw={900}
+          color="thistle.3"
           style={{
-            // opacity: 0.2,
-            position: 'absolute',
+            position: 'relative',
             zIndex: 0,
-            lineHeight: 1,
+            lineHeight: 0.75,
+            userSelect: 'none',
           }}
         >
           Sorryyy
         </Text>
-        <SimpleGrid cols={1} >
-          <Text
-            size={"28px"}
-            fw={700} color='ultra-violet'
-            style={{ position: 'relative', zIndex: 1, lineHeight: 1 }}
-          >
-            Error 404
+        
+        <Stack gap={0} align="center" style={{ position: 'relative', zIndex: 1 }}>
+          <Text size="24px" fw={700} color="ultra-violet">
+            Not sure where you're going
           </Text>
-          <Text
-            size={"28px"}
-            fw={700} color='ultra-violet'
-            style={{ position: 'relative', zIndex: 1, lineHeight: 1 }}
-          >
-            Not sure where you're going but we don't have it
+          <Text size="lg" color="ultra-violet.4" mt="sm">
+            But we don't have it
           </Text>
-        </SimpleGrid>
+        </Stack>
+
+        <Button
+          component="a"
+          href="/"
+          size="compact-sm"
+          radius="md"
+          style={{
+            backgroundColor: 'ultra-violet',
+            color: 'white',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          GO TO HOMEPAGE
+        </Button>
       </Stack>
     </Center>
-  )
-}
+  );
+};
 
 export default ErrorPage

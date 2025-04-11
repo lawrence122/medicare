@@ -1,7 +1,6 @@
-import { Anchor, Avatar, Box, Burger, Card, Container, Grid, Group, Image, Paper, ScrollArea, MediaQuery, Header, Navbar, SimpleGrid, TableOfContents, Text, Title, useMantineTheme, Space } from '@mantine/core';
-import React, { useEffect, useState } from 'react'
+import { Anchor, Box, Container, Grid, Group, Paper, SimpleGrid, Text, Title, Affix, Button, Drawer } from '@mantine/core';
+import { useState } from 'react'
 import { useLocation } from 'react-router-dom';
-import TOC from '../TOC';
 import AddReview from '../AddReview';
 import ReviewCard from '../ReviewCard';
 import MedicationDetails from '../MedicationDetails';
@@ -10,30 +9,19 @@ import ScrollToTop from '../ScrollToTop';
 const MedicationPage = () => {
     const location = useLocation();
     const medication = location.state;
-
-    const [active, setActive] = useState(2);
+    const [activeSection, setActiveSection] = useState('overview');
+    const [tocOpened, setTocOpened] = useState(false);
 
     const sections = [
-        { id: 'overview', title: 'Overview' },
-        { id: 'getting-started', title: 'Getting Started' },
-        { id: 'review', title: 'Review' },
-        { id: 'basic-usage', title: 'Basic Usage' },
-        { id: 'advanced-features', title: 'Advanced Features' },
-        { id: 'api-reference', title: 'API Reference' },
-        { id: 'troubleshooting', title: 'Troubleshooting' },
-        { id: 'faq', title: 'FAQ' },
-      ];
-  
-    // const items = [
-    //     { label: 'Overview', link: '#overview', order: 1 },
-    //     // { label: 'Getting Started', link: '#getting-started', order: 1 },
-    //     { label: 'Review', link: '#review', order: 2 },
-    //     // { label: 'Usage', link: '#usage', order: 2 },
-    //     // { label: 'Advanced Features', link: '#advanced-features', order: 1 },
-    //     // { label: 'Customization', link: '#customization', order: 2 },
-    //     // { label: 'API Reference', link: '#api-reference', order: 2 },
-    //     // { label: 'Conclusion', link: '#conclusion', order: 1 },
-    // ];
+        { id: "overview", label: 'Overview', order: 1 },
+        // { label: 'Getting Started', link: '#getting-started', order: 1 },
+        { id: "review", label: 'Review', order: 2 },
+        // { label: 'Usage', link: '#usage', order: 2 },
+        // { label: 'Advanced Features', link: '#advanced-features', order: 1 },
+        // { label: 'Customization', link: '#customization', order: 2 },
+        // { label: 'API Reference', link: '#api-reference', order: 2 },
+        // { label: 'Conclusion', link: '#conclusion', order: 1 },
+    ];
 
     const reviews = [
         {
@@ -56,189 +44,105 @@ const MedicationPage = () => {
         },
     ];
 
-    const theme = useMantineTheme();
-    const [opened, setOpened] = useState(false);
-    const [activeSection, setActiveSection] = useState(sections[0].id);
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+          window.scrollTo({
+            top: element.offsetTop - 80,
+            behavior: 'smooth'
+          });
+        }
+      };
+    
+    return (
+        <Container fluid mx={50}>
+          <Grid>
+            {/* Table of Contents */}
+            <Grid.Col span={2} style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
+              <Paper p="md" shadow="sm" radius="md" withBorder>
+                <Text size="lg" fw={700} mb="sm">Contents</Text>
+                {sections.map((section) => (
+                    <Anchor
+                        key={section.id}
+                        onClick={() => { setActiveSection(section.id); scrollToSection(section.id)}}
+                        color={activeSection === section.id ? 'blue' : 'dark'}
+                        weight={activeSection === section.id ? 600 : 400}
+                        style={{ display: 'block', marginBottom: 12, fontSize: 16 }}
+                    >
+                        {section.label}
+                    </Anchor>
+                ))}
+              </Paper>
+            </Grid.Col>
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentPositions = sections.map(section => {
-        const element = document.getElementById(`grid-${section.id}`);
-        if (!element) return { id: section.id, top: 0 };
-        return {
-          id: section.id,
-          top: element.getBoundingClientRect().top,
-        };
-      });
-
-      const activeSection = currentPositions
-        .filter(section => section.top <= 150)
-        .slice(-1)[0];
-      
-      if (activeSection) {
-        setActiveSection(activeSection.id);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-//   const handleTOCClick = (sectionId) => {
-//     document.getElementById(`grid-${sectionId}`).scrollIntoView({ behavior: 'smooth' });
-//     setActiveSection(sectionId);
-//     setOpened(false);
-//   };
-
-    // const tocItems = sections.map((section) => (
-    //     <Anchor
-    //       key={section.id}
-    //       onClick={() => handleTOCClick(section.id)}
-    //       color={activeSection === section.id ? 'blue' : 'dimmed'}
-    //       weight={activeSection === section.id ? 700 : 400}
-    //       py={5}
-    //       display="block"
-    //       size="sm"
-    //     >
-    //       {section.title}
-    //     </Anchor>
-    //   ));
-
-//   return (
-    // <Box>
-    //   <Header height={70} p="md" mb="lg">
-    //     <Group position="apart">
-    //       <Title order={3}>Documentation</Title>
-    //       <MediaQuery largerThan="md" styles={{ display: 'none' }}>
-    //         <Burger
-    //           opened={opened}
-    //           onClick={() => setOpened((o) => !o)}
-    //           size="sm"
-    //           color={theme.colors.gray[6]}
-    //         />
-    //       </MediaQuery>
-    //     </Group>
-    //   </Header>
-
-    //   {/* Mobile TOC Drawer */}
-    //   <MediaQuery largerThan="md" styles={{ display: 'none' }}>
-    //     <Navbar
-    //       p="md"
-    //       hidden={!opened}
-    //       style={{ position: 'fixed', top: 70, bottom: 0, zIndex: 100 }}
-    //       width={{ sm: 250, lg: 300 }}
-    //     >
-    //       <ScrollArea>
-    //         <Title order={4} mb="md">Table of Contents</Title>
-    //         {tocItems}
-    //       </ScrollArea>
-    //     </Navbar>
-    //   </MediaQuery>
-
-    //   {/* Floating TOC on desktop */}
-    //   <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-    //     <Box
-    //       sx={{
-    //         position: 'fixed',
-    //         top: 90,
-    //         right: 30,
-    //         width: '20%',
-    //         zIndex: 100,
-    //       }}
-    //     >
-    //       <Paper withBorder p="md" shadow="sm">
-    //         <Title order={4} mb="md">Table of Contents</Title>
-    //         {tocItems}
-    //       </Paper>
-    //     </Box>
-    //   </MediaQuery>
-
-    //   <Container>
-    //     <Box sx={{ maxWidth: '75%', marginRight: 'auto' }}>
-    //       <MediaQuery smallerThan="md" styles={{ maxWidth: '100%' }}>
-    //         <Box>
-    //           {sections.map(section => (
-    //             <Box key={section.id} id={`float-${section.id}`} mb="xl">
-    //               {generateSectionContent(section.id, section.title)}
-    //             </Box>
-    //           ))}
-    //         </Box>
-    //       </MediaQuery>
-    //     </Box>
-    //   </Container>
-    // </Box>
-
-
-
-    // <Container fluid >
-    //     <Box style={{ width: 300 }}>
-    //         <TOC />
-            
-    //         <TableOfContents
-    //             initialData={[
-    //                 { id: 'overview', value: '#overview', depth: 1 },
-    //                 // { label: 'Getting Started', link: '#getting-started', order: 1 },
-    //                 { id: 'Review', value: '#review', depth: 2 },
-    //                 // { label: 'Usage', link: '#usage', order: 2 },
-    //                 // { label: 'Advanced Features', link: '#advanced-features', order: 1 },
-    //                 // { label: 'Customization', link: '#customization', order: 2 },
-    //                 // { label: 'API Reference', link: '#api-reference', order: 2 },
-    //                 // { label: 'Conclusion', link: '#conclusion', order: 1 },
-    //             ]}
-    //             // active={active}
-    //             // onChange={setActive}
-    //             color="blue"
-    //             size="sm"
-    //             radius="sm"
-    //             scrollSpyOptions={{
-    //                 selector: '#mdx :is(h1, h2, h3, h4, h5, h6)',
-    //             }}
-    //             getControlProps={({ data }) => ({
-    //                 onClick: () => data.getNode().scrollIntoView(),
-    //                 children: data.value,
-    //             })}
-    //         />
-    //     </Box>
-//   )
-return(
-    <Container fluid mx={50} >
-        <Grid>
-            <Grid.Col
-                span={12} mt={15} mb={25}
-                key={"#overview"} id={"overview"}
-            >
-                <Title
-                    size={"35px"}
-                    fw={700}
-                    ta={"center"}
-                    td={"underline"}
-                    order={2}
-                >
-                    {medication.title}
+            {/* Main Content */}
+            <Grid.Col span={10}>
+              {/* Overview Section */}
+              <Box id="overview" mb={50}>
+                <Title size={35} fw={700} ta="center" td="underline" order={2} mb="xl">
+                  {medication.title}
                 </Title>
-            </Grid.Col>
-            <Grid.Col span={12} >
                 <MedicationDetails />
-            </Grid.Col>
-
-            <Space h={75} />
-            
-            <Grid.Col span={12} key={"#review"} id={"review"}>
-                <SimpleGrid cols={1} >
-                    <Group justify="space-between">
-                        <Text size={"30px"} fw={700} td={"underline"} >Reviews</Text>
-                        <AddReview {...medication} />
-                    </Group>
-                    {reviews?.map((review) => (
-                        <ReviewCard id={review.id} username={review.username} createdOn={review.createdOn} comment={review.comment} />
-                    ))}
+              </Box>
+    
+              {/* Reviews Section */}
+              <Box id="review" mb={50}>
+                <SimpleGrid cols={1}>
+                  <Group justify="space-between" mb="lg">
+                    <Title size={30} fw={700} td="underline">Reviews</Title>
+                    <AddReview {...medication} />
+                  </Group>
+                  {reviews?.map((review) => (
+                    <ReviewCard 
+                      key={review.id}
+                      id={review.id}
+                      username={review.username}
+                      createdOn={review.createdOn}
+                      comment={review.comment}
+                    />
+                  ))}
                 </SimpleGrid>
+              </Box>
             </Grid.Col>
-        </Grid>
-
-        <ScrollToTop />
-    </Container>
-  )
+          </Grid>
+    
+          {/* Mobile TOC Button - Only shown on small screens */}
+          <Affix position={{ bottom: 20, left: 20 }} display={{ base: 'block', md: 'none' }}>
+            <Button 
+              onClick={() => setTocOpened(true)}
+              variant="filled"
+              radius="xl"
+              size="compact-lg"
+            >
+              Table of Contents
+            </Button>
+          </Affix>
+    
+          {/* Mobile TOC Drawer */}
+          <Drawer
+            opened={tocOpened}
+            onClose={() => setTocOpened(false)}
+            title="Table of Contents"
+            position="bottom"
+            size="60%"
+            display={{ base: 'block', sm: 'none' }}
+          >
+            {sections.map((section) => (
+              <Anchor
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                color={activeSection === section.id ? 'blue' : 'dark'}
+                weight={activeSection === section.id ? 600 : 400}
+                style={{ display: 'block', marginBottom: 12, fontSize: 16 }}
+              >
+                {section.label}
+              </Anchor>
+            ))}
+          </Drawer>
+    
+          <ScrollToTop />
+        </Container>
+      );
 }
 
 export default MedicationPage
