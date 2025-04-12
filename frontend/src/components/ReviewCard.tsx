@@ -7,9 +7,9 @@ const ReviewCard = (review: ReviewItem) => {
       <Group mb={15}>
         <Avatar
           size={50}
-          key={review.username}
-          name={review.username}
-          color='initials' 
+          key={review.username ?? 'anonymous'}
+          name={review.username ?? 'Anonymous'}
+          color='initials'
           allowedInitialsColors={['thistle', 'ultra-violet', 'sea-green']}
         />
         <SimpleGrid cols={1} verticalSpacing="xs">

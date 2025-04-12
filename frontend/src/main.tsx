@@ -12,6 +12,7 @@ import ProfilePage from './components/pages/ProfilePage.tsx'
 import ContactUs from './components/pages/ContactUs.tsx'
 import AboutUs from './components/pages/AboutUs.tsx'
 import MedicationPage from './components/pages/MedicationPage.tsx';
+import MedicationDetailsPage from './components/pages/MedicationDetailsPage.tsx';
 import Onboarding from './components/onboarding/Onboarding.tsx';
 import { GlobalProvider } from './utils/GlobalContext.tsx';
 
@@ -28,16 +29,18 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <HomePage />,
-
       },
       {
         path: "test",
         element: <Testing />,
-
       },
       {
-        path: ":medication",
+        path: "medication/:id",
         element: <MedicationPage />,
+      },
+      {
+        path: "medication-details",
+        element: <MedicationDetailsPage />,
       },
       {
         path: "onboarding",
@@ -57,7 +60,6 @@ const router = createBrowserRouter([
       },
     ]
   },
-
 ])
 
 const theme = createTheme({

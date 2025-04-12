@@ -1,257 +1,285 @@
-import { Avatar, Button, Card, Center, Container, Divider, Fieldset, Grid, Group, NumberInput, Paper, Select, SimpleGrid, Slider, Space, Switch, Tabs, Text, TextInput } from '@mantine/core'
+import { Avatar, Button, Card, Center, Container, Divider, Fieldset, Grid, Group, NumberInput, Paper, Select, SimpleGrid, Slider, Space, Switch, Tabs, Text, TextInput, MultiSelect, Stack, Title, Badge, Rating, Modal, Textarea, ComboboxItem } from '@mantine/core'
 import DeleteAccount from '../userProfile/DeleteAccount';
 import { conditionsTestData, allergiesTestData } from '../../utils/testData';
 import CustomCombobox from '../onboarding/CustomCombobox';
-import { IconEdit, IconScaleOutline, IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
+import { IconEdit, IconScaleOutline, IconTrash, IconHeart, IconHeartFilled, IconChartLine } from '@tabler/icons-react';
+import { useState, useEffect } from 'react';
 import { DateInput } from '@mantine/dates';
 import { calculateAge } from '../../utils/AgeCalculator';
+import { UserProfile } from '../../interfaces/UserProfile';
+import { medications } from '../../data/medications';
+import { MedicationItem } from '../../interfaces/MedicationItem';
 
 const ProfilePage = () => {
-    const [editing, setEditing] = useState<boolean>(false);
-    const [dob, setDOB] = useState<Date | null>(null);
-    const [age, setAge] = useState<number | undefined>();
-    const [weight, setWeight] = useState<number | string>();
+    const [activeTab, setActiveTab] = useState<string | null>('profile');
+    const [isEditing, setIsEditing] = useState(false);
+    const [symptomModalOpen, setSymptomModalOpen] = useState(false);
+    const [selectedMedication, setSelectedMedication] = useState<string | null>(null);
+    const [symptomDate, setSymptomDate] = useState<Date | null>(null);
+    const [symptomSeverity, setSymptomSeverity] = useState<number>(1);
+    const [symptomNotes, setSymptomNotes] = useState('');
 
-    const [medToDelete, setMedToDelete] = useState<number | null>(null);
+    const [profile, setProfile] = useState<UserProfile>({
+        email: 'johndoe@gmail.com',
+        displayName: 'John Doe',
+        dateOfBirth: '',
+        gender: 'male',
+        weight: 70,
+        height: 175,
+        allergies: [],
+        conditions: [],
+        favoriteMedications: []
+    });
 
-    const [language, setLanguage] = useState('en');
-    const [fontSize, setFontSize] = useState(16);
-    const [notifications, setNotifications] = useState(true);
-    const [twoFactorAuth, setTwoFactorAuth] = useState(false);
-    const [savedMeds, setSavedMeds] = useState([
-        {
-          id: 1,
-          name: 'Ibuprofen',
-          dosage: '200mg',
-          frequency: 'Every 6 hours',
-          description: 'Pain reliever and anti-inflammatory'
-        },
-        {
-          id: 2,
-          name: 'Amoxicillin',
-          dosage: '500mg',
-          frequency: 'Twice daily',
-          description: 'Antibiotic for bacterial infections'
-        },
-    ]);
-    
-    const handleRemove = async (id: number) => {
-        setMedToDelete(id);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            setSavedMeds(prev => prev.filter(med => med.id !== id));
-        } catch (error) {
-            console.error('Failed to remove medication');
-        } finally {
-            setMedToDelete(null);
+    const handleSaveProfile = () => {
+        setIsEditing(false);
+        // TODO: Save to backend
+    };
+
+    const toggleFavoriteMedication = (medicationId: string) => {
+        setProfile((prev: UserProfile) => {
+            const isFavorited = prev.favoriteMedications.some((m: { medicationId: string }) => m.medicationId === medicationId);
+            if (isFavorited) {
+                return {
+                    ...prev,
+                    favoriteMedications: prev.favoriteMedications.filter((m: { medicationId: string }) => m.medicationId !== medicationId)
+                };
+            } else {
+                return {
+                    ...prev,
+                    favoriteMedications: [...prev.favoriteMedications, { medicationId, symptoms: [] }]
+                };
+            }
+        });
+    };
+
+    const addSymptomTrack = () => {
+        if (!selectedMedication || !symptomDate) return;
+
+        setProfile((prev: UserProfile) => ({
+            ...prev,
+            favoriteMedications: prev.favoriteMedications.map((med: { medicationId: string; symptoms: any[] }) => {
+                if (med.medicationId === selectedMedication) {
+                    return {
+                        ...med,
+                        symptoms: [...med.symptoms, {
+                            date: symptomDate.toISOString(),
+                            severity: symptomSeverity,
+                            notes: symptomNotes
+                        }]
+                    };
+                }
+                return med;
+            })
+        }));
+
+        setSymptomModalOpen(false);
+        setSymptomDate(null);
+        setSymptomSeverity(1);
+        setSymptomNotes('');
+    };
+
+    const handleGenderChange = (value: string | null) => {
+        if (value === 'male' || value === 'female' || value === 'other') {
+            setProfile((prev: UserProfile) => ({
+                ...prev,
+                gender: value
+            }));
         }
     };
-    
-  return (
-    <Container fluid >
-        <Paper radius="lg" shadow="sm" p={25} bg="white" mih={800}>
-            <Tabs defaultValue="profile">
-                <Tabs.List my={20} >
-                    <Tabs.Tab value="profile">Your Profile</Tabs.Tab>
-                    <Tabs.Tab value="medication">Your Saved Medications</Tabs.Tab>
-                    <Tabs.Tab value="settings" ml={"auto"}>Settings</Tabs.Tab>
-                </Tabs.List>
 
-                <Tabs.Panel value="profile" pt="xs">
-                    <Grid grow gutter={25} >
-                        <Grid.Col
-                            span={{ base: 12, md: 3 }}
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                height: "100%",
-                            }}
-                        >
-                            <SimpleGrid cols={1} w={300} >
-                                <Center>
-                                    <Avatar 
-                                        // src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
-                                        variant='transparent'
-                                        radius={200}
-                                        w={"auto"}
-                                        h={100}
-                                        name={sessionStorage.getItem('username')}
-                                        color='black'
+    const handleWeightChange = (value: string | number) => {
+        const numValue = typeof value === 'string' ? parseFloat(value) : value;
+        setProfile((prev: UserProfile) => ({
+            ...prev,
+            weight: !isNaN(numValue) ? numValue : undefined
+        }));
+    };
+
+    const handleHeightChange = (value: string | number) => {
+        const numValue = typeof value === 'string' ? parseFloat(value) : value;
+        setProfile((prev: UserProfile) => ({
+            ...prev,
+            height: !isNaN(numValue) ? numValue : undefined
+        }));
+    };
+
+    return (
+        <Container size="xl" py="xl">
+            <Paper shadow="sm" radius="lg" p="xl">
+                <Tabs value={activeTab} onChange={setActiveTab}>
+                    <Tabs.List>
+                        <Tabs.Tab value="profile">Profile</Tabs.Tab>
+                        <Tabs.Tab value="medications">Favorite Medications</Tabs.Tab>
+                    </Tabs.List>
+
+                    <Tabs.Panel value="profile" pt="xl">
+                        <Stack>
+                            {!isEditing ? (
+                                <>
+                                    <Title order={3}>{profile.displayName}</Title>
+                                    <Text><strong>Email:</strong> {profile.email}</Text>
+                                    <Text><strong>Date of Birth:</strong> {profile.dateOfBirth || 'Not set'}</Text>
+                                    <Text><strong>Gender:</strong> {profile.gender || 'Not set'}</Text>
+                                    <Text><strong>Weight:</strong> {profile.weight ? `${profile.weight} kg` : 'Not set'}</Text>
+                                    <Text><strong>Height:</strong> {profile.height ? `${profile.height} cm` : 'Not set'}</Text>
+                                    <Text><strong>Allergies:</strong> {profile.allergies?.join(', ') || 'None'}</Text>
+                                    <Text><strong>Medical Conditions:</strong> {profile.conditions?.join(', ') || 'None'}</Text>
+                                    <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+                                </>
+                            ) : (
+                                <Stack>
+                                    <TextInput
+                                        label="Display Name"
+                                        value={profile.displayName}
+                                        onChange={(e) => setProfile(prev => ({ ...prev, displayName: e.target.value }))}
                                     />
-                                </Center>
-                                <Center>
-                                    <Text>Someone's name</Text>
-                                </Center>
-                                <Divider />
-                                <Center>
-                                    <Text>some info</Text>
-                                </Center>
-                                <Center>
-                                    <Text>Joined on: {new Date('04/02/2022').toDateString()}</Text>
-                                </Center>
-                            </SimpleGrid>
-                        </Grid.Col>
-                        <Grid.Col span={{ base: 12, md: 4 }} >
-                        <Fieldset legend="Personal information">
-                                <TextInput
-                                    label="Name"
-                                    disabled={!editing}
-                                    placeholder="John Doe"
-                                />
-                                <TextInput
-                                    mt="md"
-                                    disabled={!editing}
-                                    label="Email"
-                                    placeholder="smt@smt.com"
-                                />
-                                <DateInput
-                                    mt="md" required clearable
-                                    disabled={!editing}
-                                    label="Date of Birth"
-                                    maxDate={new Date()}
-                                    value={dob}
-                                    onChange={(date) => { setDOB(date); setAge(calculateAge(date)) }}
-                                />
-                                <NumberInput
-                                    label="Weight" mt="md" required
-                                    disabled={!editing}
-                                    value={weight} onChange={setWeight}
-                                    rightSection={<IconScaleOutline stroke={2} />}
-                                    rightSectionPointerEvents="none"
-                                    rightSectionWidth={40}
-                                />
-                            </Fieldset>
-                        </Grid.Col>
-                        <Grid.Col span={{ base: 12, sm: 4 }} >
-                            <Fieldset legend="Medical History">
-                                <CustomCombobox label="Existing Conditions" withGroup={false} options={conditionsTestData} groups={[]} multiSelect={true} readOnly={!editing} />
-                                
-                                <Space h={25} />
+                                    <DateInput
+                                        label="Date of Birth"
+                                        value={profile.dateOfBirth ? new Date(profile.dateOfBirth) : null}
+                                        onChange={(date) => setProfile(prev => ({ ...prev, dateOfBirth: date?.toISOString() }))}
+                                    />
+                                    <Select
+                                        label="Gender"
+                                        value={profile.gender}
+                                        onChange={handleGenderChange}
+                                        data={[
+                                            { value: 'male', label: 'Male' },
+                                            { value: 'female', label: 'Female' },
+                                            { value: 'other', label: 'Other' }
+                                        ]}
+                                    />
+                                    <NumberInput
+                                        label="Weight (kg)"
+                                        value={profile.weight}
+                                        onChange={handleWeightChange}
+                                        min={0}
+                                        max={300}
+                                    />
+                                    <NumberInput
+                                        label="Height (cm)"
+                                        value={profile.height}
+                                        onChange={handleHeightChange}
+                                        min={0}
+                                        max={300}
+                                    />
+                                    <MultiSelect
+                                        label="Allergies"
+                                        value={profile.allergies || []}
+                                        onChange={(value: string[]) => setProfile(prev => ({ ...prev, allergies: value }))}
+                                        data={allergiesTestData}
+                                        searchable
+                                    />
+                                    <MultiSelect
+                                        label="Medical Conditions"
+                                        value={profile.conditions || []}
+                                        onChange={(value: string[]) => setProfile(prev => ({ ...prev, conditions: value }))}
+                                        data={conditionsTestData}
+                                        searchable
+                                    />
+                                    <Group>
+                                        <Button onClick={handleSaveProfile}>Save</Button>
+                                        <Button variant="light" onClick={() => setIsEditing(false)}>Cancel</Button>
+                                    </Group>
+                                </Stack>
+                            )}
+                        </Stack>
+                    </Tabs.Panel>
 
-                                <CustomCombobox label="Allergies" withGroup={false} options={allergiesTestData} groups={[]} multiSelect={true} readOnly={!editing} />
-                            </Fieldset>
-                        </Grid.Col>
-                    </Grid>
-                    <Group justify='flex-end'>
-                        {editing
-                        ? <>
-                            <Button variant='default' onClick={() => { setEditing(!editing) }} >
-                                Cancel
-                            </Button>
-                            <Button
-                                color="sea-green"
-                                onClick={() => { setEditing(!editing) }}
-                            >
-                                Save
-                            </Button>
-                        </>
-                        : <Button onClick={() => { setEditing(!editing) }} >
-                            <IconEdit stroke={2} />
-                            Edit
-                        </Button>
-                        }
-                    </Group>
-                </Tabs.Panel>
+                    <Tabs.Panel value="medications" pt="xl">
+                        <Grid>
+                            {medications.map(medication => {
+                                const isFavorited = profile.favoriteMedications.some(m => m.medicationId === medication.id);
+                                const medicationSymptoms = profile.favoriteMedications.find(m => m.medicationId === medication.id)?.symptoms || [];
 
-                <Tabs.Panel value="medication" pt="xs">
-                    {savedMeds.length === 0 ? (
-                        <Text fs="italic" color="dimmed">No medications saved yet</Text>
-                    ) : (
-                        <SimpleGrid
-                            cols={{ base: 1, sm: 2, lg: 3 }}
-                            spacing="md"
-                            verticalSpacing="md"
-                        >
-                        {savedMeds.map(med => (
-                            <Card key={med.id} shadow="sm" padding="lg" radius="md" withBorder>
-                                <Group justify="space-between" mb="xs">
-                                    <Text fw={500} size="lg">{med.name}</Text>
-                                    <Button
-                                        loading={medToDelete === med.id}
-                                        variant="subtle"
-                                        color="red"
-                                        size="sm"
-                                        onClick={() => handleRemove(med.id)}
-                                        leftSection={<IconTrash size={16} />}
-                                    >
-                                    Remove
-                                    </Button>
-                                </Group>
+                                return (
+                                    <Grid.Col key={medication.id} span={{ base: 12, sm: 6, lg: 4 }}>
+                                        <Card shadow="sm" padding="lg" radius="md" withBorder>
+                                            <Card.Section withBorder inheritPadding py="xs">
+                                                <Group justify="space-between">
+                                                    <Text fw={500}>{medication.name}</Text>
+                                                    <Button
+                                                        variant="subtle"
+                                                        color={isFavorited ? 'red' : 'gray'}
+                                                        onClick={() => toggleFavoriteMedication(medication.id)}
+                                                        leftSection={isFavorited ? <IconHeartFilled size={16} /> : <IconHeart size={16} />}
+                                                    >
+                                                        {isFavorited ? 'Remove' : 'Add to Favorites'}
+                                                    </Button>
+                                                </Group>
+                                            </Card.Section>
 
-                                <Text size="sm" c="dimmed">
-                                    <strong>Dosage:</strong> {med.dosage}
-                                </Text>
-                                <Text size="sm" c="dimmed">
-                                    <strong>Frequency:</strong> {med.frequency}
-                                </Text>
-                                <Text size="sm" mt="sm">
-                                    {med.description}
-                                </Text>
-                            </Card>
-                        ))}
-                        </SimpleGrid>
-                    )}
-                </Tabs.Panel>
+                                            {isFavorited && (
+                                                <>
+                                                    <Stack mt="md">
+                                                        <Group justify="space-between">
+                                                            <Text size="sm" fw={500}>Symptom Tracking</Text>
+                                                            <Button
+                                                                variant="light"
+                                                                size="xs"
+                                                                onClick={() => {
+                                                                    setSelectedMedication(medication.id);
+                                                                    setSymptomModalOpen(true);
+                                                                }}
+                                                                leftSection={<IconChartLine size={16} />}
+                                                            >
+                                                                Add Entry
+                                                            </Button>
+                                                        </Group>
 
-                <Tabs.Panel value="settings" pt="xs">
-                    <SimpleGrid cols={1} w={500}>
-                        <Switch
-                            label="Enable Notifications"
-                            labelPosition="left"
-                            checked={notifications}
-                            onChange={(e) => setNotifications(e.currentTarget.checked)}
-                        />
+                                                        {medicationSymptoms.length > 0 ? (
+                                                            <Stack gap="xs">
+                                                                {medicationSymptoms.map((symptom, index) => (
+                                                                    <Card key={index} withBorder padding="xs">
+                                                                        <Text size="sm">{new Date(symptom.date).toLocaleDateString()}</Text>
+                                                                        <Group>
+                                                                            <Text size="sm">Severity:</Text>
+                                                                            <Rating value={symptom.severity} readOnly />
+                                                                        </Group>
+                                                                        <Text size="sm" c="dimmed">{symptom.notes}</Text>
+                                                                    </Card>
+                                                                ))}
+                                                            </Stack>
+                                                        ) : (
+                                                            <Text size="sm" c="dimmed">No symptom entries yet</Text>
+                                                        )}
+                                                    </Stack>
+                                                </>
+                                            )}
+                                        </Card>
+                                    </Grid.Col>
+                                );
+                            })}
+                        </Grid>
+                    </Tabs.Panel>
+                </Tabs>
+            </Paper>
 
-                        <Space h={15} />
-
-                        <div>
-                            <Text size="sm" mb="xs">Font Size: {fontSize}px</Text>
-                            <Slider 
-                                value={fontSize} 
-                                onChange={setFontSize}
-                                min={12}
-                                max={24}
-                                marks={[
-                                    { value: 12, label: '12px' },
-                                    { value: 16, label: '16px' },
-                                    { value: 20, label: '20px' },
-                                    { value: 24, label: '24px' },
-                                ]}
-                            />
-                        </div>
-
-                        <Space h={15} />
-
-                        <Switch
-                            label="Two-Factor Authentication"
-                            labelPosition="left"
-                            checked={twoFactorAuth}
-                            onChange={(e) => setTwoFactorAuth(e.currentTarget.checked)}
-                        />
-
-                        <Space h={15} />
-
-                        <Select
-                            label="Language"
-                            value={language}
-                            onChange={(value) => setLanguage(value || 'en')}
-                            data={[
-                            { value: 'en', label: 'English' },
-                            { value: 'es', label: 'Spanish' },
-                            { value: 'fr', label: 'French' },
-                            ]}
-                        />
-                    </SimpleGrid>
-                    <Group mt={15} justify='flex-end'>
-                        <DeleteAccount />
-                    </Group>
-                </Tabs.Panel>
-            </Tabs>
-        </Paper>
-    </Container>
-  )
+            <Modal
+                opened={symptomModalOpen}
+                onClose={() => setSymptomModalOpen(false)}
+                title="Add Symptom Entry"
+            >
+                <Stack>
+                    <DateInput
+                        label="Date"
+                        value={symptomDate}
+                        onChange={setSymptomDate}
+                        maxDate={new Date()}
+                    />
+                    <Text size="sm">Severity</Text>
+                    <Rating size="lg" value={symptomSeverity} onChange={setSymptomSeverity} />
+                    <Textarea
+                        label="Notes"
+                        value={symptomNotes}
+                        onChange={(e) => setSymptomNotes(e.currentTarget.value)}
+                        placeholder="Enter any additional notes about your symptoms..."
+                    />
+                    <Button onClick={addSymptomTrack}>Save Entry</Button>
+                </Stack>
+            </Modal>
+        </Container>
+    );
 }
 
 export default ProfilePage

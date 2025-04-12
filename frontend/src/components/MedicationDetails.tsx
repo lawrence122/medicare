@@ -1,103 +1,171 @@
-import { PieChart, RadarChart, RadialBarChart } from '@mantine/charts';
-import { Card, Grid, Group, Image, Paper, SimpleGrid, Text } from '@mantine/core';
-import { useLocation } from 'react-router-dom';
-import { data } from '../utils/testData';
+import { Container, Title, Text, Group, Card, Image, Stack, Badge, Divider, Tabs, Grid } from '@mantine/core';
+import { MedicationItem } from '../interfaces/MedicationItem';
+import MedicationReviews from './MedicationReviews';
 
-const MedicationDetails = () => {
-    const location = useLocation();
-    const medication = location.state;
-
-    const pieData = [
-        { name: 'Group A', value: 400 },
-        { name: 'Group B', value: 300 },
-        { name: 'Group C', value: 300 },
-    ];
-
-    const radialBarData = [
-        { name: 'Effectiveness', value: 75, color: 'blue.6' },
-        { name: 'Side Effects', value: 25, color: 'red.6' },
-        { name: 'Compliance', value: 60, color: 'green.6' },
-    ];
-    
-    const radarData = [
-        { metric: 'Pain Relief', currentValue: 80, previousValue: 65 },
-        { metric: 'Duration', currentValue: 70, previousValue: 60 },
-        { metric: 'Tolerability', currentValue: 90, previousValue: 85 },
-        { metric: 'Cost', currentValue: 50, previousValue: 40 },
-    ];
-
-    return (
-        <>
-          <Grid>
-            <Grid.Col span={{ lg: 3, md: 6 }}>
-              <Image
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
-                variant='transparent'
-                radius={75}
-                w={250} h={250}
-              />
-            </Grid.Col>
-            <Grid.Col span={{ lg: 9, md: 6 }}>
-              <Paper radius='lg' bg='white' p={25} shadow='sm'>
-                <Text>{medication.description}</Text>
-              </Paper>
-            </Grid.Col>
-          </Grid>
-      
-          <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="xl" mt="xl">
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Card.Section>
-                <PieChart 
-                  withLabelsLine 
-                  labelsPosition="outside" 
-                  labelsType="percent" 
-                  withLabels 
-                  data={data} 
-                  h={300}
-                />
-              </Card.Section>
-              <Text ta="center" fw={500} mt="sm">Medication Distribution</Text>
-            </Card>
-      
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <Card.Section>
-                <RadialBarChart 
-                    data={radialBarData}
-                    dataKey="value"
-                    h={300}
-                    withLegend
-                    tooltipProps={{
-                        formatter: (value) => `${value}%`,
-                    }}
-                    // color="blue.6"
-                    // color={({ color }) => color}
-                />
-                </Card.Section>
-                <Text ta="center" fw={500} mt="sm">Effectiveness Analysis</Text>
-            </Card>
-      
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <Card.Section>
-                    <RadarChart
-                        h={300}
-                        data={radarData.map(item => ({
-                            metric: item.metric,
-                            'Current Month': item.currentValue,
-                            'Previous Month': item.previousValue
-                        }))}
-                        dataKey="metric"
-                        series={[
-                            { name: 'Current Month', color: 'lime.4' },
-                            { name: 'Previous Month', color: 'cyan.4' }
-                        ]}
-                        withPolarRadiusAxis
-                    />
-                </Card.Section>
-                <Text ta="center" fw={500} mt="sm">Performance Metrics</Text>
-            </Card>
-          </SimpleGrid>
-        </>
-    );
+interface MedicationDetailsProps {
+  medication: MedicationItem;
 }
 
-export default MedicationDetails
+// Sample reviews data - in a real app, this would come from your backend
+const sampleReviews = [
+  {
+    id: '1',
+    userName: 'John Doe',
+    rating: 4,
+    comment: 'This medication worked well for my symptoms. The side effects were minimal.',
+    date: '2024-03-15',
+    helpfulCount: 12
+  },
+  {
+    id: '2',
+    userName: 'Jane Smith',
+    rating: 5,
+    comment: 'Very effective and fast-acting. Would recommend to others.',
+    date: '2024-03-10',
+    helpfulCount: 8
+  },
+  {
+    id: '3',
+    userName: 'Mike Johnson',
+    rating: 3,
+    comment: 'Helped with my condition but had some mild side effects.',
+    date: '2024-03-05',
+    helpfulCount: 5
+  }
+];
+
+const MedicationDetails = ({ medication }: MedicationDetailsProps) => {
+  return (
+    <Container size="xl" py="xl">
+      <Card shadow="sm" padding="lg" radius="lg">
+        <Group align="flex-start" mb="md">
+          {medication.imageUrl && (
+            <Image
+              src={medication.imageUrl}
+              alt={medication.title || medication.name || 'Medication'}
+              width={200}
+              height={200}
+              fit="contain"
+            />
+          )}
+          <Stack>
+            <Title order={2}>{medication.title || medication.name}</Title>
+            {medication.genericName && (
+              <Text size="lg" c="dimmed">
+                Generic Name: {medication.genericName}
+              </Text>
+            )}
+            {medication.manufacturer && (
+              <Text size="sm">
+                Manufacturer: {medication.manufacturer}
+              </Text>
+            )}
+            {medication.category && (
+              <Badge size="lg" variant="light">
+                {medication.category}
+              </Badge>
+            )}
+          </Stack>
+        </Group>
+
+        <Tabs defaultValue="details">
+          <Tabs.List>
+            <Tabs.Tab value="details">Details</Tabs.Tab>
+            <Tabs.Tab value="reviews">Reviews</Tabs.Tab>
+          </Tabs.List>
+
+          <Tabs.Panel value="details" pt="md">
+            <Grid>
+              <Grid.Col span={{ base: 12, md: 6 }}>
+                <Stack>
+                  <Title order={3}>Description</Title>
+                  <Text>{medication.description}</Text>
+
+                  {medication.symptoms && medication.symptoms.length > 0 && (
+                    <>
+                      <Title order={3} mt="md">Symptoms Treated</Title>
+                      <Group>
+                        {medication.symptoms.map((symptom, index) => (
+                          <Badge key={index} variant="outline">
+                            {symptom}
+                          </Badge>
+                        ))}
+                      </Group>
+                    </>
+                  )}
+
+                  {medication.dosage && (
+                    <>
+                      <Title order={3} mt="md">Dosage</Title>
+                      <Text>{medication.dosage}</Text>
+                    </>
+                  )}
+                </Stack>
+              </Grid.Col>
+
+              <Grid.Col span={{ base: 12, md: 6 }}>
+                <Stack>
+                  {medication.sideEffects && medication.sideEffects.length > 0 && (
+                    <>
+                      <Title order={3}>Side Effects</Title>
+                      <Group>
+                        {medication.sideEffects.map((effect, index) => (
+                          <Badge key={index} color="red" variant="light">
+                            {effect}
+                          </Badge>
+                        ))}
+                      </Group>
+                    </>
+                  )}
+
+                  {medication.interactions && medication.interactions.length > 0 && (
+                    <>
+                      <Title order={3} mt="md">Drug Interactions</Title>
+                      <Group>
+                        {medication.interactions.map((interaction, index) => (
+                          <Badge key={index} color="yellow" variant="light">
+                            {interaction}
+                          </Badge>
+                        ))}
+                      </Group>
+                    </>
+                  )}
+
+                  {medication.effectiveness && (
+                    <>
+                      <Title order={3} mt="md">Effectiveness</Title>
+                      <Text>{medication.effectiveness}</Text>
+                    </>
+                  )}
+
+                  {medication.averageRating && (
+                    <>
+                      <Title order={3} mt="md">Average Rating</Title>
+                      <Text>{medication.averageRating} / 5</Text>
+                    </>
+                  )}
+
+                  {medication.price && (
+                    <>
+                      <Title order={3} mt="md">Price</Title>
+                      <Stack>
+                        <Text>Generic: ${medication.price.generic.toFixed(2)}</Text>
+                        <Text>Brand: ${medication.price.brand.toFixed(2)}</Text>
+                      </Stack>
+                    </>
+                  )}
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Tabs.Panel>
+
+          <Tabs.Panel value="reviews" pt="md">
+            <MedicationReviews reviews={sampleReviews} />
+          </Tabs.Panel>
+        </Tabs>
+      </Card>
+    </Container>
+  );
+};
+
+export default MedicationDetails;
